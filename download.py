@@ -34,6 +34,18 @@ def get_max_page(url):
         max_page = 200
     return start_page, max_page
 
+def get_cbz_title(url):
+    # Fetch the HTML and extract the <title> for CBZ filename
+    resp = requests.get(url)
+    if resp.status_code == 200:
+        m = re.search(r'<title>(.*?)<\/title>', resp.text, re.IGNORECASE)
+        if m:
+            # Remove illegal filename characters
+            return re.sub(r'[\\/:*?"<>|]', '', m.group(1)).strip()
+    # fallback to book id if title not found
+    base_url, book_id = get_flipbook_info(url)
+    return book_id
+
 def download_images(base_url, book_id, start_page, max_page, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     downloaded = []
@@ -91,7 +103,8 @@ def main():
         out_dir = f"{book_id}_images"
         images = download_images(base_url, book_id, start_page, max_page, out_dir)
         if images:
-            cbz_name = os.path.join(downloads_dir, f"{book_id}.cbz")
+            cbz_title = get_cbz_title(url)
+            cbz_name = os.path.join(downloads_dir, f"{cbz_title}.cbz")
             create_cbz(images, cbz_name)
             for img in images:
                 os.remove(img)
