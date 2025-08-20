@@ -1,213 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>FlipHTML5 Downloader</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background: #23272f;
-        color: #e0e0e0;
-        font-family: 'Roboto', Arial, sans-serif;
-      }
-
-      body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
+<head>
+  <meta charset="UTF-8">
+  <title>FlipHTML5 Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #23272f;
+      color: #e0e0e0;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: #2c313a;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px #0008;
+      padding: 6vw 5vw;
+      width: 96vw;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #90caf9;
+      font-weight: 500;
+      margin-bottom: 2em;
+      text-align: center;
+      letter-spacing: 1px;
+      font-size: 2em;
+    }
+    label {
+      font-size: 1.2em;
+      margin-bottom: 0.7em;
+      color: #b0bec5;
+      font-weight: 400;
+    }
+    input[type="text"] {
+      background: #23272f;
+      color: #e0e0e0;
+      border: 1.5px solid #424242;
+      border-radius: 8px;
+      padding: 1.2em;
+      font-size: 1.2em;
+      width: 100%;
+      margin-bottom: 1.5em;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    input[type="text"]:focus {
+      border-color: #90caf9;
+    }
+    button {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1.2em 0;
+      font-size: 1.3em;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 1.5em;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+    button:hover, button:focus {
+      background: #1565c0;
+    }
+    #status {
+      margin-top: 0.5em;
+      background: #23272f;
+      color: #90caf9;
+      border-radius: 8px;
+      padding: 1.2em;
+      min-height: 2.5em;
+      font-size: 1.15em;
+      box-shadow: 0 1px 4px #0002;
+      text-align: center;
+      word-break: break-word;
+    }
+    @media (max-width: 600px) {
       .container {
-        background: #2c313a;
-        border-radius: 18px;
-        box-shadow: 0 6px 32px #0008;
-        padding: 6vw 5vw;
-        width: 96vw;
-        max-width: 420px;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        margin: 0 auto;
-      }
-
-      h2 {
-        color: #90caf9;
-        font-weight: 500;
-        margin-bottom: 2em;
-        text-align: center;
-        letter-spacing: 1px;
-        font-size: 2em;
-      }
-
-      label {
-        font-size: 1.2em;
-        margin-bottom: 0.7em;
-        color: #b0bec5;
-        font-weight: 400;
-      }
-
-      input[type="text"] {
-        background: #23272f;
-        color: #e0e0e0;
-        border: 1.5px solid #424242;
-        border-radius: 8px;
-        padding: 1.2em;
-        font-size: 1.2em;
-        width: 100%;
-        margin-bottom: 1.5em;
-        outline: none;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-        font-family: inherit;
-      }
-
-      input[type="text"]:focus {
-        border-color: #90caf9;
-      }
-
-      button {
-        background: #1976d2;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 1.2em 0;
-        font-size: 1.3em;
-        font-weight: 500;
-        cursor: pointer;
-        margin-bottom: 1.5em;
+        padding: 8vw 2vw;
+        max-width: 95vw;
+        border-radius: 12px;
         box-shadow: 0 2px 8px #0003;
-        transition: background 0.2s;
-        width: 100%;
-        font-family: inherit;
+        margin: 4vw auto;
       }
-
-      button:hover,
-      button:focus {
-        background: #1565c0;
+      h2 {
+        font-size: 2.3em;
+        margin-bottom: 2em;
       }
-
+      label {
+        font-size: 1.3em;
+      }
+      input[type="text"] {
+        font-size: 1.3em;
+        padding: 1.5em;
+        margin-bottom: 2em;
+        height: 3.5em;
+      }
+      button {
+        font-size: 1.3em;
+        padding: 1.5em 0;
+        height: 3.5em;
+      }
       #status {
-        margin-top: 0.5em;
-        background: #23272f;
-        color: #90caf9;
-        border-radius: 8px;
-        padding: 1.2em;
-        min-height: 2.5em;
-        font-size: 1.15em;
-        box-shadow: 0 1px 4px #0002;
-        text-align: center;
-        word-break: break-word;
+        font-size: 1.2em;
+        padding: 1.5em;
+        min-height: 3em;
+        margin-top: 2em;
       }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>FlipHTML5 Downloader</h2>
+    <label for="url">FlipHTML5 URL:</label>
+    <input type="text" id="url" placeholder="Enter FlipHTML5 URL" autocomplete="off">
+    <button onclick="downloadFlipbook()">Download as CBZ</button>
+    <div id="status"></div>
+  </div>
+  <script>
+    async function downloadFlipbook() {
+      const url = document.getElementById("url").value.trim();
+      const status = document.getElementById("status");
+      status.textContent = "Checking URL...";
 
-      @media (max-width: 600px) {
-        .container {
-          padding: 8vw 2vw;
-          max-width: 95vw;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px #0003;
-          margin: 4vw auto;
-        }
-
-        h2 {
-          font-size: 2.3em;
-          margin-bottom: 2em;
-        }
-
-        label {
-          font-size: 1.3em;
-        }
-
-        input[type="text"] {
-          font-size: 1.3em;
-          padding: 1.5em;
-          margin-bottom: 2em;
-          height: 3.5em;
-        }
-
-        button {
-          font-size: 1.3em;
-          padding: 1.5em 0;
-          height: 3.5em;
-        }
-
-        #status {
-          font-size: 1.2em;
-          padding: 1.5em;
-          min-height: 3em;
-          margin-top: 2em;
-        }
+      // Strip everything after index.html
+      const cleanUrl = url.replace(/(index\.html).*$/, 'index.html');
+      const m = cleanUrl.match(/^https:\/\/online\.fliphtml5\.com\/([^/]+)\/([^/]+)\/index\.html/i);
+      if (!m) {
+        status.textContent = "Invalid FlipHTML5 URL format.";
+        return;
       }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>FlipHTML5 Downloader</h2>
-      <label for="url">FlipHTML5 URL:</label>
-      <input type="text" id="url" placeholder="Enter FlipHTML5 URL" autocomplete="off">
-      <button onclick="downloadFlipbook()">Download as CBZ</button>
-      <div id="status"></div>
-    </div>
-    <script>
-      async function downloadFlipbook() {
-        const url = document.getElementById("url").value.trim();
-        const status = document.getElementById("status");
-        status.textContent = "Checking URL...";
-        // Strip everything after index.html
-        const cleanUrl = url.replace(/(index\.html).*$/, 'index.html');
-        const m = cleanUrl.match(/^https:\/\/online\.fliphtml5\.com\/([^/]+)\/([^/]+)\/index\.html/i);
-        if (!m) {
-          status.textContent = "Invalid FlipHTML5 URL format.";
-          return;
-        }
-        const base = m[1],
-          book = m[2];
-        const zip = new JSZip();
-        let downloaded = 0;
-        // Try up to 500 pages, stop at first missing/non-JPEG
-        for (let page = 1; page <= 500; page++) {
-          const imgUrl = `https://online.fliphtml5.com/${base}/${book}/files/page/${page}.jpg`;
-          status.textContent = `Downloading page ${page}...`;
-          try {
-            const resp = await fetch(imgUrl);
-            if (!resp.ok) {
-              status.textContent = `Stopped at page ${page} (image not found).`;
-              break;
-            }
-            const blob = await resp.blob();
-            const arr = await blob.arrayBuffer();
-            const bytes = new Uint8Array(arr);
-            if (bytes[0] !== 0xFF || bytes[1] !== 0xD8) {
-              status.textContent = `Stopped at page ${page} (not a JPEG).`;
-              break;
-            }
-            zip.file(`${String(page).padStart(3, "0")}.jpg`, blob);
-            downloaded++;
-          } catch (e) {
-            status.textContent = `Error downloading page ${page}: ${e}`;
+      const base = m[1], book = m[2];
+      const zip = new JSZip();
+      let downloaded = 0;
+
+      // Try up to 500 pages, stop at first missing/non-JPEG
+      for (let page = 1; page <= 500; page++) {
+        const imgUrl = `https://online.fliphtml5.com/${base}/${book}/files/page/${page}.jpg`;
+        status.textContent = `Downloading page ${page}...`;
+        try {
+          const resp = await fetch(imgUrl);
+          if (!resp.ok) {
+            status.textContent = `Stopped at page ${page} (image not found).`;
             break;
           }
+          const blob = await resp.blob();
+          const arr = await blob.arrayBuffer();
+          const bytes = new Uint8Array(arr);
+          if (bytes[0] !== 0xFF || bytes[1] !== 0xD8) {
+            status.textContent = `Stopped at page ${page} (not a JPEG).`;
+            break;
+          }
+          zip.file(`${String(page).padStart(3, "0")}.jpg`, blob);
+          downloaded++;
+        } catch (e) {
+          status.textContent = `Error downloading page ${page}: ${e}`;
+          break;
         }
-        if (downloaded === 0) {
-          status.textContent = "No images downloaded.";
-          return;
-        }
-        status.textContent = "Creating CBZ file...";
-        const cbzBlob = await zip.generateAsync({
-          type: "blob"
-        });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(cbzBlob);
-        link.download = `${book}.cbz`;
-        link.click();
-        status.textContent = `Downloaded ${downloaded} pages and created ${book}.cbz`;
       }
-    </script>
-  </body>
+
+      if (downloaded === 0) {
+        status.textContent = "No images downloaded.";
+        return;
+      }
+
+      status.textContent = "Creating CBZ file...";
+      const cbzBlob = await zip.generateAsync({type: "blob"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(cbzBlob);
+      link.download = `${book}.cbz`;
+      link.click();
+      status.textContent = `Downloaded ${downloaded} pages and created ${book}.cbz`;
+    }
+  </script>
+</body>
 </html>
