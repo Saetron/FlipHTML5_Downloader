@@ -2,6 +2,10 @@
 
 Downloads FlipHTML5 Flipbooks as a CBZ file.
 
+## Try it Online
+
+👉 **[Use FlipHTML5 Downloader in your browser](https://saetron.github.io/FlipHTML5_Downloader/)**
+
 ## Requirements
 
 - Python 3.8 or newer
