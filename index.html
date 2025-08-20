@@ -154,6 +154,19 @@
       const zip = new JSZip();
       let downloaded = 0;
 
+      // Get the website title for CBZ filename
+      let cbzName = book;
+      try {
+        const resp = await fetch(cleanUrl);
+        const html = await resp.text();
+        const match = html.match(/<title>(.*?)<\/title>/i);
+        if (match && match[1]) {
+          cbzName = match[1].replace(/[\\/:*?"<>|]/g, "").trim();
+        }
+      } catch (e) {
+        // fallback to book id
+      }
+
       // Try up to 500 pages, stop at first missing/non-JPEG
       for (let page = 1; page <= 500; page++) {
         const imgUrl = `https://online.fliphtml5.com/${base}/${book}/files/page/${page}.jpg`;
@@ -188,9 +201,9 @@
       const cbzBlob = await zip.generateAsync({type: "blob"});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(cbzBlob);
-      link.download = `${book}.cbz`;
+      link.download = `${cbzName}.cbz`;
       link.click();
-      status.textContent = `Downloaded ${downloaded} pages and created ${book}.cbz`;
+      status.textContent = `Downloaded ${downloaded} pages and created ${cbzName}.cbz`;
     }
   </script>
 </body>
