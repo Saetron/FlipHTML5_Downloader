@@ -198,7 +198,10 @@
       }
 
       status.textContent = "Creating CBZ file...";
-      const cbzBlob = await zip.generateAsync({type: "blob"});
+      const cbzBlob = await zip.generateAsync({
+  	    type: "blob",
+  	    mimeType: "application/octet-stream" 
+      });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(cbzBlob);
       link.download = `${cbzName}.cbz`;
