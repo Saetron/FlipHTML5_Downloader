@@ -1,6 +1,6 @@
 # FlipHTML5 Downloader (Web Version)
 
-Download FlipHTML5 Flipbooks as a CBZ file directly in your browser—no installation required!
+Download FlipHTML5 Flipbooks as a CBZ file directly in your browser - no installation required!
 
 ## Try it Online
 
