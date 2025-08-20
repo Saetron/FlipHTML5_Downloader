@@ -3,54 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <title>FlipHTML5 Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
       background: #23272f;
       color: #e0e0e0;
       font-family: 'Roboto', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    }
+    body {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
     .container {
       background: #2c313a;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px #0006;
-      padding: 2em 2.5em;
-      margin-top: 4em;
-      width: 100%;
-      max-width: 480px;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px #0008;
+      padding: 6vw 5vw;
+      width: 96vw;
+      max-width: 420px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      margin: 0 auto;
     }
     h2 {
       color: #90caf9;
       font-weight: 500;
-      margin-bottom: 1.5em;
+      margin-bottom: 2em;
       text-align: center;
       letter-spacing: 1px;
+      font-size: 2em;
     }
     label {
-      font-size: 1em;
-      margin-bottom: 0.5em;
+      font-size: 1.2em;
+      margin-bottom: 0.7em;
       color: #b0bec5;
+      font-weight: 400;
     }
     input[type="text"] {
       background: #23272f;
       color: #e0e0e0;
-      border: 1px solid #424242;
-      border-radius: 6px;
-      padding: 0.7em;
-      font-size: 1em;
+      border: 1.5px solid #424242;
+      border-radius: 8px;
+      padding: 1.2em;
+      font-size: 1.2em;
       width: 100%;
-      margin-bottom: 1em;
+      margin-bottom: 1.5em;
       outline: none;
       transition: border-color 0.2s;
+      box-sizing: border-box;
+      font-family: inherit;
     }
     input[type="text"]:focus {
       border-color: #90caf9;
@@ -59,37 +68,72 @@
       background: #1976d2;
       color: #fff;
       border: none;
-      border-radius: 6px;
-      padding: 0.8em 0;
-      font-size: 1.1em;
+      border-radius: 8px;
+      padding: 1.2em 0;
+      font-size: 1.3em;
       font-weight: 500;
       cursor: pointer;
-      margin-top: 0.5em;
+      margin-bottom: 1.5em;
       box-shadow: 0 2px 8px #0003;
       transition: background 0.2s;
+      width: 100%;
+      font-family: inherit;
     }
-    button:hover {
+    button:hover, button:focus {
       background: #1565c0;
     }
     #status {
-      margin-top: 1.5em;
+      margin-top: 0.5em;
       background: #23272f;
       color: #90caf9;
-      border-radius: 6px;
-      padding: 1em;
-      min-height: 2em;
-      font-size: 1em;
+      border-radius: 8px;
+      padding: 1.2em;
+      min-height: 2.5em;
+      font-size: 1.15em;
       box-shadow: 0 1px 4px #0002;
       text-align: center;
       word-break: break-word;
     }
+@media (max-width: 600px) {
+  .container {
+    padding: 8vw 2vw;
+    max-width: 95vw;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0003;
+    margin: 4vw auto;
+  }
+  h2 {
+    font-size: 2.3em;
+    margin-bottom: 2em;
+  }
+  label {
+    font-size: 1.3em;
+  }
+  input[type="text"] {
+    font-size: 1.3em;
+    padding: 1.5em;
+    margin-bottom: 2em;
+    height: 3.5em;
+  }
+  button {
+    font-size: 1.3em;
+    padding: 1.5em 0;
+    height: 3.5em;
+  }
+  #status {
+    font-size: 1.2em;
+    padding: 1.5em;
+    min-height: 3em;
+    margin-top: 2em;
+  }
+}
   </style>
 </head>
 <body>
   <div class="container">
     <h2>FlipHTML5 Downloader</h2>
     <label for="url">FlipHTML5 URL:</label>
-    <input type="text" id="url" placeholder="Enter FlipHTML5 URL" size="60">
+    <input type="text" id="url" placeholder="Enter FlipHTML5 URL" autocomplete="off">
     <button onclick="downloadFlipbook()">Download as CBZ</button>
     <div id="status"></div>
   </div>

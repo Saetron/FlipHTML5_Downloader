@@ -1,39 +1,31 @@
-# FlipHTML5 Downloader
+# FlipHTML5 Downloader (Web Version)
 
-Downloads FlipHTML5 Flipbooks as a CBZ file.
+Download FlipHTML5 Flipbooks as a CBZ file directly in your browser—no installation required!
 
-## Requirements
+## Try it Online
 
-- Python 3.8 or newer
-- [requests](https://pypi.org/project/requests/) library
+👉 **[Use FlipHTML5 Downloader in your browser](https://saetron.github.io/FlipHTML5_Downloader/)**
 
-## Installation
+## Features
 
-1. Clone or download this repository.
-2. Install dependencies using pip:
+- No installation or Python required
+- Works on desktop and mobile
+- Material-inspired dark interface
+- Downloads public FlipHTML5 books as CBZ (Comic Book Zip) files
 
-    ```sh
-    pip install -r requirements.txt
-    ```
+## How to Use
 
-## Usage
-
-1. Run the script once to generate a `urls.txt` file:
-
-    ```sh
-    python download.py
-    ```
-
-2. Open `urls.txt` and add one FlipHTML5 URL per line (e.g., `https://online.fliphtml5.com/abcd/efgh/index.html`).
-
-3. Run the script again:
-
-    ```sh
-    python download.py
-    ```
-
-4. The script will download each flipbook as a `.cbz` file into the `downloads/` folder. Finished URLs are tracked in `finished.txt`.
+1. Open the [web app](https://saetron.github.io/FlipHTML5_Downloader/).
+2. Paste a FlipHTML5 book URL (e.g. `https://online.fliphtml5.com/abcd/efgh/index.html`).
+3. Click **Download as CBZ**.
+4. Wait for the download to finish. The CBZ file will be saved to your device.
 
 ## Notes
 
-- Only Public Flipbooks are supported.
+- Only public Flipbooks are supported.
+- The tool stops downloading at the first missing or invalid page.
+- All downloads happen locally in your browser.
+
+---
+
+For the Python version, see [`FlipHTML5 Downloader`](https://github.com/Saetron/FlipHTML5_Downloader).
