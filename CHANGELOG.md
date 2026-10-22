@@ -7,39 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Separated styling into dedicated [`style.css`](style.css) stylesheet with clean CSS design tokens, typography, and dark/light color-scheme support.
-- Modernized user interface: added a clean header, subtle icons, active progress bar, dynamic status indicators, and keyboard shortcut support (Enter key to submit).
-- Support for modern FlipHTML5 books with encrypted page manifests using FlipHTML5's WASM-based `deString` decryption module.
-- Multi-format image support: automatically detects and validates WebP (`RIFF....WEBP`), PNG, and JPEG formats via binary magic bytes.
-- Dynamic path resolution across `files/large/`, `files/page/`, and `files/thumb/`.
-- Download button state handling (disabled during active downloading to avoid redundant requests).
-
-### Fixed
-- Fixed downloading for modern FlipHTML5 books where pages are stored as hashed filenames or WebP images instead of sequential numbers.
-- Improved URL parsing to handle trailing slashes, missing `index.html`, and hash fragments robustly.
-- Decoded HTML entities in book titles before sanitizing CBZ archive names.
-
-### Changed
-- Refactored frontend styling out of inline `<style>` tags in `index.html` into `style.css`.
-- Streamlined repository configuration by removing pre-commit checks and workflows.
-- Added and updated `AGENTS.md` guidelines for AI coding agents and automated contributors.
-- Updated documentation and project structure.
-
 ## [2.0.0] - 2026-10-22
 
 ### Added
 - Complete client-side web application in `index.html` replacing the Python CLI downloader.
 - In-browser CBZ generation using JSZip.
+- Dedicated standalone stylesheet [`style.css`](style.css) with modern design tokens, typography, and dark/light color-scheme support.
+- Modernized user interface: clean header, subtle icons, active progress bar, dynamic status indicators, and keyboard shortcut support (Enter key to submit).
+- Support for modern FlipHTML5 books with encrypted page manifests using FlipHTML5's WASM-based `deString` decryption module.
+- Multi-format image support: automatically detects and validates WebP (`RIFF....WEBP`), PNG, and JPEG formats via binary magic bytes.
+- Dynamic path resolution across `files/large/`, `files/page/`, and `files/thumb/`.
+- Download button state handling (disabled during active downloading to avoid redundant requests).
 - Automatic extraction of the book title from HTML metadata for naming downloaded CBZ files.
-- Support for URLs with page hash/anchor identifiers.
-- JPEG magic byte validation (`0xff 0xd8`) to detect corrupt or non-image responses.
-- Responsive, Material-inspired dark user interface optimized for mobile and desktop screens.
+- Robust URL parsing supporting page hash/anchor identifiers, trailing slashes, and omitted `index.html`.
+- Added `AGENTS.md` guidelines for AI coding agents and automated contributors.
 - GitHub Pages live deployment support.
 
 ### Changed
 - Replaced backend Python script dependencies (`requests`, `beautifulsoup4`) with native browser `fetch` and client-side processing.
+- Refactored frontend styling out of inline `<style>` tags into `style.css`.
 - Updated project license to European Union Public Licence (EUPL-1.2).
+- Streamlined repository configuration by removing pre-commit checks and workflows.
+- Updated documentation and project structure.
 
 ### Removed
 - Python script `download.py` and `requirements.txt`.
