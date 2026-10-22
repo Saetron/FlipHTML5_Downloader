@@ -5,7 +5,9 @@ This repository contains **FlipHTML5 Downloader**, a client-side web application
 ## Architecture & Project Structure
 
 - **`index.html`**: The entire frontend application in a single file (HTML5, CSS3, vanilla JavaScript).
-  - External Dependency: [JSZip](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) loaded via CDN for generating `.cbz` archive in-memory.
+  - External Dependencies:
+    - [JSZip](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) loaded via CDN for generating `.cbz` archive in-memory.
+    - [deString.js](https://static.fliphtml5.com/resourceFiles/html5_templates/js/deString.js) WebAssembly module loaded for decrypting modern FlipHTML5 book page manifests.
   - No build toolchain, bundler, or transpiler required.
 - **`README.md`**: User-facing documentation and usage guide.
 - **`CHANGELOG.md`**: Version history and log of changes.
@@ -14,17 +16,21 @@ This repository contains **FlipHTML5 Downloader**, a client-side web application
 ## Core Application Logic
 
 1. **URL Parsing & Normalization**:
-   - Accepts FlipHTML5 URLs in formats such as `https://online.fliphtml5.com/<base>/<book>/index.html`.
-   - Strips trailing hash/page fragments while retaining `index.html`.
+   - Accepts FlipHTML5 URLs in multiple formats (`https://online.fliphtml5.com/<base>/<book>/`, `/index.html`, `#p=1`, etc.).
+   - Extracts `<base>` and `<book>` identifiers to derive the book root path.
 2. **Title Extraction**:
    - Fetches the book's `index.html` to extract the `<title>` element.
-   - Cleans illegal filename characters (`[\\/:*?"<>|]`) to name the `.cbz` archive.
-3. **Page Fetching & Validation**:
-   - Pages are fetched sequentially (`https://online.fliphtml5.com/<base>/<book>/files/page/<page>.jpg`).
-   - Magic bytes check: First 2 bytes must match JPEG signature (`0xff 0xd8`).
-   - Downloads halt on HTTP errors or non-JPEG responses.
-4. **CBZ Packaging & Saving**:
-   - Formats filenames zero-padded (e.g., `001.jpg`).
+   - Decodes HTML entities and cleans illegal filename characters (`[\\/:*?"<>|]`) to name the `.cbz` archive.
+3. **Page Discovery & Decryption**:
+   - Fetches `javascript/config.js` to inspect `htmlConfig`.
+   - If modern encrypted `fliphtml5_pages` manifest is present, decrypts it using the WASM `deString` module (`Module._DeString`).
+   - Resolves page image paths (`files/large/`, `files/page/`, etc.).
+   - Falls back gracefully to sequential probing (`files/large/` and `files/page/`) for legacy books without manifests.
+4. **Image Fetching & Multi-Format Validation**:
+   - Magic bytes check: validates binary file headers for JPEG (`0xff 0xd8`), PNG (`0x89 0x50 0x4e 0x47`), and WebP (`RIFF....WEBP`).
+   - Rejects non-image error pages (404s, HTML error bodies).
+5. **CBZ Packaging & Saving**:
+   - Formats filenames zero-padded with detected image extension (e.g., `001.webp`, `001.jpg`).
    - Packages into a zip blob with MIME type `application/octet-stream`.
    - Generates an object URL and triggers native browser file download.
 

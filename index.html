@@ -5,6 +5,7 @@
     <title>FlipHTML5 Downloader</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://static.fliphtml5.com/resourceFiles/html5_templates/js/deString.js"></script>
     <style>
       html,
       body {
@@ -76,13 +77,17 @@
         cursor: pointer;
         margin-bottom: 1.5em;
         box-shadow: 0 2px 8px #0003;
-        transition: background 0.2s;
+        transition: background 0.2s, opacity 0.2s;
         width: 100%;
         font-family: inherit;
       }
-      button:hover,
-      button:focus {
+      button:hover:not(:disabled),
+      button:focus:not(:disabled) {
         background: #1565c0;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
       #status {
         margin-top: 0.5em;
@@ -141,77 +146,281 @@
         placeholder="Enter FlipHTML5 URL"
         autocomplete="off"
       />
-      <button onclick="downloadFlipbook()">Download as CBZ</button>
+      <button id="downloadBtn" onclick="downloadFlipbook()">Download as CBZ</button>
       <div id="status"></div>
     </div>
     <script>
+      function detectImageFormat(bytes) {
+        if (bytes.length < 4) return null;
+        if (bytes[0] === 0xff && bytes[1] === 0xd8) return "jpg";
+        if (
+          bytes[0] === 0x89 &&
+          bytes[1] === 0x50 &&
+          bytes[2] === 0x4e &&
+          bytes[3] === 0x47
+        )
+          return "png";
+        if (
+          bytes.length >= 12 &&
+          bytes[0] === 0x52 &&
+          bytes[1] === 0x49 &&
+          bytes[2] === 0x46 &&
+          bytes[3] === 0x46 &&
+          bytes[8] === 0x57 &&
+          bytes[9] === 0x45 &&
+          bytes[10] === 0x42 &&
+          bytes[11] === 0x50
+        ) {
+          return "webp";
+        }
+        if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46)
+          return "gif";
+        return null;
+      }
+
+      async function ensureDeStringReady() {
+        if (window.Module && window.Module.isReady && window.Module._DeString)
+          return true;
+        if (!document.querySelector('script[src*="deString.js"]')) {
+          const s = document.createElement("script");
+          s.src =
+            "https://static.fliphtml5.com/resourceFiles/html5_templates/js/deString.js";
+          document.head.appendChild(s);
+        }
+        for (let i = 0; i < 60; i++) {
+          await new Promise((r) => setTimeout(r, 100));
+          if (window.Module && window.Module.isReady && window.Module._DeString)
+            return true;
+        }
+        return false;
+      }
+
+      function decryptFliphtml5String(encryptedStr) {
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(encryptedStr);
+        const inPtr = window.Module._malloc(bytes.length + 1);
+        window.Module.HEAPU8.set(bytes, inPtr);
+        window.Module.HEAPU8[inPtr + bytes.length] = 0;
+
+        const outPtr = window.Module._DeString(inPtr);
+        let str = "";
+        if (typeof window.UTF8ToString === "function") {
+          str = window.UTF8ToString(outPtr);
+        } else {
+          let end = outPtr;
+          while (window.Module.HEAPU8[end] !== 0) end++;
+          str = new TextDecoder().decode(
+            window.Module.HEAPU8.subarray(outPtr, end),
+          );
+        }
+        window.Module._FreeMemory(outPtr);
+        window.Module._free(inPtr);
+        return str;
+      }
+
       async function downloadFlipbook() {
-        const url = document.getElementById("url").value.trim();
+        const urlInput = document.getElementById("url");
+        const downloadBtn = document.getElementById("downloadBtn");
         const status = document.getElementById("status");
+        const url = urlInput.value.trim();
+
         status.textContent = "Checking URL...";
 
-        const cleanUrl = url.replace(/(index\.html).*$/, "index.html");
-        const m = cleanUrl.match(
-          /^https:\/\/online\.fliphtml5\.com\/([^/]+)\/([^/]+)\/index\.html/i,
+        const m = url.match(
+          /^https?:\/\/online\.fliphtml5\.com\/([^/?#]+)\/([^/?#]+)/i,
         );
         if (!m) {
           status.textContent = "Invalid FlipHTML5 URL format.";
           return;
         }
-        const base = m[1],
-          book = m[2];
-        const zip = new JSZip();
-        let downloaded = 0;
+        const base = m[1];
+        const book = m[2];
+        const bookRoot = `https://online.fliphtml5.com/${base}/${book}/`;
 
-        let cbzName = book;
+        downloadBtn.disabled = true;
+
         try {
-          const resp = await fetch(cleanUrl);
-          const html = await resp.text();
-          const match = html.match(/<title>(.*?)<\/title>/i);
-          if (match && match[1]) {
-            cbzName = match[1].replace(/[\\/:*?"<>|]/g, "").trim();
-          }
-        } catch (e) {}
+          let cbzName = book;
+          let indexHtml = "";
 
-        for (let page = 1; page <= 500; page++) {
-          const imgUrl = `https://online.fliphtml5.com/${base}/${book}/files/page/${page}.jpg`;
-          status.textContent = `Downloading page ${page}...`;
+          status.textContent = "Fetching book details...";
           try {
-            const resp = await fetch(imgUrl);
-            if (!resp.ok) {
-              status.textContent = `Stopped at page ${page} (image not found).`;
-              break;
+            const resp = await fetch(`${bookRoot}index.html`);
+            if (resp.ok) {
+              indexHtml = await resp.text();
+              const titleMatch = indexHtml.match(/<title>(.*?)<\/title>/i);
+              if (titleMatch && titleMatch[1]) {
+                const decoded = titleMatch[1]
+                  .replace(/&amp;/g, "&")
+                  .replace(/&lt;/g, "<")
+                  .replace(/&gt;/g, ">")
+                  .replace(/&quot;/g, '"')
+                  .replace(/&#39;/g, "'");
+                const cleanTitle = decoded.replace(/[\\/:*?"<>|]/g, "").trim();
+                if (cleanTitle) cbzName = cleanTitle;
+              }
             }
-            const blob = await resp.blob();
-            const arr = await blob.arrayBuffer();
-            const bytes = new Uint8Array(arr);
-            if (bytes[0] !== 0xff || bytes[1] !== 0xd8) {
-              status.textContent = `Stopped at page ${page} (not a JPEG).`;
-              break;
-            }
-            zip.file(`${String(page).padStart(3, "0")}.jpg`, blob);
-            downloaded++;
           } catch (e) {
-            status.textContent = `Error downloading page ${page}: ${e}`;
-            break;
+            console.warn("Could not fetch index.html:", e);
           }
-        }
 
-        if (downloaded === 0) {
-          status.textContent = "No images downloaded.";
-          return;
-        }
+          status.textContent = "Fetching book configuration...";
+          let pageList = [];
 
-        status.textContent = "Creating CBZ file...";
-        const cbzBlob = await zip.generateAsync({
-          type: "blob",
-          mimeType: "application/octet-stream",
-        });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(cbzBlob);
-        link.download = `${cbzName}.cbz`;
-        link.click();
-        status.textContent = `Downloaded ${downloaded} pages and created ${cbzName}.cbz`;
+          try {
+            let configUrl = `${bookRoot}javascript/config.js`;
+            const cfgMatch = indexHtml.match(
+              /src=["']([^"']*javascript\/config\.js[^"']*)["']/i,
+            );
+            if (cfgMatch && cfgMatch[1]) {
+              configUrl = new URL(cfgMatch[1], bookRoot).href;
+            }
+            const cfgResp = await fetch(configUrl);
+            if (cfgResp.ok) {
+              const cfgText = await cfgResp.text();
+              const fn = new Function(
+                cfgText +
+                  "; return typeof htmlConfig !== 'undefined' ? htmlConfig : null;",
+              );
+              const htmlConfig = fn();
+              if (htmlConfig && htmlConfig.fliphtml5_pages) {
+                if (typeof htmlConfig.fliphtml5_pages === "string") {
+                  status.textContent = "Decrypting page list...";
+                  const ready = await ensureDeStringReady();
+                  if (ready) {
+                    const decrypted = decryptFliphtml5String(
+                      htmlConfig.fliphtml5_pages,
+                    );
+                    const lastBracket = decrypted.lastIndexOf("]");
+                    if (lastBracket !== -1) {
+                      pageList = JSON.parse(
+                        decrypted.substring(0, lastBracket + 1),
+                      );
+                    }
+                  }
+                } else if (Array.isArray(htmlConfig.fliphtml5_pages)) {
+                  pageList = htmlConfig.fliphtml5_pages;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn("Could not load or decrypt config.js:", e);
+          }
+
+          const zip = new JSZip();
+          let downloaded = 0;
+
+          if (pageList && pageList.length > 0) {
+            for (let i = 0; i < pageList.length; i++) {
+              const p = pageList[i];
+              const pageNum = i + 1;
+              status.textContent = `Downloading page ${pageNum} of ${pageList.length}...`;
+
+              const file = Array.isArray(p.n)
+                ? p.n[0]
+                : p.n ||
+                  (Array.isArray(p.l)
+                    ? p.l[0]
+                    : p.l || (Array.isArray(p.t) ? p.t[0] : p.t));
+              if (!file) continue;
+
+              const candidates = [];
+              if (file.startsWith("http://") || file.startsWith("https://")) {
+                candidates.push(file);
+              } else if (
+                file.startsWith("files/") ||
+                file.startsWith("./files/")
+              ) {
+                candidates.push(bookRoot + file.replace(/^\.\//, ""));
+              } else {
+                candidates.push(`${bookRoot}files/large/${file}`);
+                candidates.push(`${bookRoot}files/page/${file}`);
+                candidates.push(`${bookRoot}files/thumb/${file}`);
+              }
+
+              let pageDownloaded = false;
+              for (const imgUrl of candidates) {
+                try {
+                  const resp = await fetch(imgUrl);
+                  if (!resp.ok) continue;
+                  const arr = await resp.arrayBuffer();
+                  const bytes = new Uint8Array(arr);
+                  const format = detectImageFormat(bytes);
+                  if (!format) continue;
+
+                  zip.file(`${String(pageNum).padStart(3, "0")}.${format}`, arr);
+                  downloaded++;
+                  pageDownloaded = true;
+                  break;
+                } catch (err) {
+                  console.warn(`Error fetching ${imgUrl}:`, err);
+                }
+              }
+
+              if (!pageDownloaded) {
+                console.warn(`Could not download page ${pageNum}`);
+              }
+            }
+          } else {
+            for (let page = 1; page <= 500; page++) {
+              status.textContent = `Downloading page ${page}...`;
+              const candidates = [
+                `${bookRoot}files/large/${page}.jpg`,
+                `${bookRoot}files/large/${page}.webp`,
+                `${bookRoot}files/page/${page}.jpg`,
+                `${bookRoot}files/page/${page}.webp`,
+                `${bookRoot}files/page/${page}.png`,
+              ];
+
+              let pageDownloaded = false;
+              for (const imgUrl of candidates) {
+                try {
+                  const resp = await fetch(imgUrl);
+                  if (!resp.ok) continue;
+                  const arr = await resp.arrayBuffer();
+                  const bytes = new Uint8Array(arr);
+                  const format = detectImageFormat(bytes);
+                  if (!format) continue;
+
+                  zip.file(
+                    `${String(page).padStart(3, "0")}.${format}`,
+                    arr,
+                  );
+                  downloaded++;
+                  pageDownloaded = true;
+                  break;
+                } catch (e) {
+                  break;
+                }
+              }
+
+              if (!pageDownloaded) {
+                break;
+              }
+            }
+          }
+
+          if (downloaded === 0) {
+            status.textContent =
+              "No images downloaded. Please verify the URL or book visibility.";
+            return;
+          }
+
+          status.textContent = "Creating CBZ file...";
+          const cbzBlob = await zip.generateAsync({
+            type: "blob",
+            mimeType: "application/octet-stream",
+          });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(cbzBlob);
+          link.download = `${cbzName}.cbz`;
+          link.click();
+          status.textContent = `Downloaded ${downloaded} pages and created ${cbzName}.cbz`;
+        } catch (err) {
+          status.textContent = `An error occurred: ${err.message || err}`;
+        } finally {
+          downloadBtn.disabled = false;
+        }
       }
     </script>
   </body>
