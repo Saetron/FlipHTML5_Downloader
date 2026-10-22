@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Separated styling into dedicated [`style.css`](style.css) stylesheet with clean CSS design tokens, typography, and dark/light color-scheme support.
+- Modernized user interface: added a clean header, subtle icons, active progress bar, dynamic status indicators, and keyboard shortcut support (Enter key to submit).
 - Support for modern FlipHTML5 books with encrypted page manifests using FlipHTML5's WASM-based `deString` decryption module.
 - Multi-format image support: automatically detects and validates WebP (`RIFF....WEBP`), PNG, and JPEG formats via binary magic bytes.
 - Dynamic path resolution across `files/large/`, `files/page/`, and `files/thumb/`.
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Decoded HTML entities in book titles before sanitizing CBZ archive names.
 
 ### Changed
+- Refactored frontend styling out of inline `<style>` tags in `index.html` into `style.css`.
 - Streamlined repository configuration by removing pre-commit checks and workflows.
 - Added and updated `AGENTS.md` guidelines for AI coding agents and automated contributors.
 - Updated documentation and project structure.

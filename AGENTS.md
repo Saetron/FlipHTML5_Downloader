@@ -4,7 +4,8 @@ This repository contains **FlipHTML5 Downloader**, a client-side web application
 
 ## Architecture & Project Structure
 
-- **`index.html`**: The entire frontend application in a single file (HTML5, CSS3, vanilla JavaScript).
+- **`index.html`**: The frontend markup and application controller (HTML5, vanilla JavaScript).
+- **`style.css`**: Standalone stylesheet containing CSS design tokens, responsive layout, animations, and dark/light color-scheme theming.
   - External Dependencies:
     - [JSZip](https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js) loaded via CDN for generating `.cbz` archive in-memory.
     - [deString.js](https://static.fliphtml5.com/resourceFiles/html5_templates/js/deString.js) WebAssembly module loaded for decrypting modern FlipHTML5 book page manifests.

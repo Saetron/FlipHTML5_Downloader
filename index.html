@@ -4,152 +4,125 @@
     <meta charset="UTF-8" />
     <title>FlipHTML5 Downloader</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://static.fliphtml5.com/resourceFiles/html5_templates/js/deString.js"></script>
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background: #23272f;
-        color: #e0e0e0;
-        font-family: "Roboto", Arial, sans-serif;
-      }
-      body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .container {
-        background: #2c313a;
-        border-radius: 18px;
-        box-shadow: 0 6px 32px #0008;
-        padding: 6vw 5vw;
-        width: 96vw;
-        max-width: 420px;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        margin: 0 auto;
-      }
-      h2 {
-        color: #90caf9;
-        font-weight: 500;
-        margin-bottom: 2em;
-        text-align: center;
-        letter-spacing: 1px;
-        font-size: 2em;
-      }
-      label {
-        font-size: 1.2em;
-        margin-bottom: 0.7em;
-        color: #b0bec5;
-        font-weight: 400;
-      }
-      input[type="text"] {
-        background: #23272f;
-        color: #e0e0e0;
-        border: 1.5px solid #424242;
-        border-radius: 8px;
-        padding: 1.2em;
-        font-size: 1.2em;
-        width: 100%;
-        margin-bottom: 1.5em;
-        outline: none;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-        font-family: inherit;
-      }
-      input[type="text"]:focus {
-        border-color: #90caf9;
-      }
-      button {
-        background: #1976d2;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 1.2em 0;
-        font-size: 1.3em;
-        font-weight: 500;
-        cursor: pointer;
-        margin-bottom: 1.5em;
-        box-shadow: 0 2px 8px #0003;
-        transition: background 0.2s, opacity 0.2s;
-        width: 100%;
-        font-family: inherit;
-      }
-      button:hover:not(:disabled),
-      button:focus:not(:disabled) {
-        background: #1565c0;
-      }
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-      #status {
-        margin-top: 0.5em;
-        background: #23272f;
-        color: #90caf9;
-        border-radius: 8px;
-        padding: 1.2em;
-        min-height: 2.5em;
-        font-size: 1.15em;
-        box-shadow: 0 1px 4px #0002;
-        text-align: center;
-        word-break: break-word;
-      }
-      @media (max-width: 600px) {
-        .container {
-          padding: 8vw 2vw;
-          max-width: 95vw;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px #0003;
-          margin: 4vw auto;
-        }
-        h2 {
-          font-size: 2.3em;
-          margin-bottom: 2em;
-        }
-        label {
-          font-size: 1.3em;
-        }
-        input[type="text"] {
-          font-size: 1.3em;
-          padding: 1.5em;
-          margin-bottom: 2em;
-          height: 3.5em;
-        }
-        button {
-          font-size: 1.3em;
-          padding: 1.5em 0;
-          height: 3.5em;
-        }
-        #status {
-          font-size: 1.2em;
-          padding: 1.5em;
-          min-height: 3em;
-          margin-top: 2em;
-        }
-      }
-    </style>
   </head>
   <body>
-    <div class="container">
-      <h2>FlipHTML5 Downloader</h2>
-      <label for="url">FlipHTML5 URL:</label>
-      <input
-        type="text"
-        id="url"
-        placeholder="Enter FlipHTML5 URL"
-        autocomplete="off"
-      />
-      <button id="downloadBtn" onclick="downloadFlipbook()">Download as CBZ</button>
-      <div id="status"></div>
-    </div>
+    <main class="app-wrapper">
+      <header class="app-header">
+        <div class="logo-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <path d="M12 6v6"/>
+            <path d="M9 9l3 3 3-3"/>
+          </svg>
+        </div>
+        <h1>FlipHTML5 Downloader</h1>
+        <p>Save public flipbooks directly as Comic Book Zip (.cbz) archives in your browser.</p>
+      </header>
+
+      <section class="main-card">
+        <div class="form-group">
+          <label for="url" class="form-label">Flipbook URL</label>
+          <div class="input-row">
+            <div class="input-wrapper">
+              <span class="input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                id="url"
+                placeholder="https://online.fliphtml5.com/abcd/efgh/"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <button id="downloadBtn" class="btn-primary" onclick="downloadFlipbook()">
+              <span class="btn-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </span>
+              <span>Download CBZ</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="statusPanel" class="status-panel" style="display: none;">
+          <div class="status-header">
+            <div class="status-message">
+              <span id="statusDot" class="status-dot"></span>
+              <span id="statusText">Ready</span>
+            </div>
+            <span id="statusMeta" class="status-meta"></span>
+          </div>
+          <div id="progressTrack" class="progress-track" style="display: none;">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-item">
+            <span class="feature-title">Client-Side Only</span>
+            <span class="feature-desc">All fetching and CBZ packaging happen strictly inside your browser.</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-title">Modern Manifests</span>
+            <span class="feature-desc">Decrypts modern page manifests and handles WebP & JPEG images.</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-title">Automatic Naming</span>
+            <span class="feature-desc">Extracts book titles automatically to name the resulting archive.</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="app-footer">
+        <a href="https://github.com/Saetron/FlipHTML5_Downloader" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <span>•</span>
+        <a href="LICENSE" target="_blank">EUPL-1.2</a>
+      </footer>
+    </main>
+
     <script>
+      const urlInput = document.getElementById("url");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const statusPanel = document.getElementById("statusPanel");
+      const statusText = document.getElementById("statusText");
+      const statusDot = document.getElementById("statusDot");
+      const statusMeta = document.getElementById("statusMeta");
+      const progressTrack = document.getElementById("progressTrack");
+      const progressFill = document.getElementById("progressFill");
+
+      urlInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !downloadBtn.disabled) {
+          downloadFlipbook();
+        }
+      });
+
+      function updateStatus(message, state = "active", meta = "", progress = null) {
+        statusPanel.style.display = "flex";
+        statusText.textContent = message;
+        statusDot.className = `status-dot ${state}`;
+        statusMeta.textContent = meta;
+
+        if (progress !== null && progress >= 0) {
+          progressTrack.style.display = "block";
+          progressFill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        } else {
+          progressTrack.style.display = "none";
+          progressFill.style.width = "0%";
+        }
+      }
+
       function detectImageFormat(bytes) {
         if (bytes.length < 4) return null;
         if (bytes[0] === 0xff && bytes[1] === 0xd8) return "jpg";
@@ -219,18 +192,19 @@
       }
 
       async function downloadFlipbook() {
-        const urlInput = document.getElementById("url");
-        const downloadBtn = document.getElementById("downloadBtn");
-        const status = document.getElementById("status");
-        const url = urlInput.value.trim();
+        const rawUrl = urlInput.value.trim();
+        if (!rawUrl) {
+          updateStatus("Please enter a FlipHTML5 URL.", "error");
+          return;
+        }
 
-        status.textContent = "Checking URL...";
+        updateStatus("Analyzing URL...", "active");
 
-        const m = url.match(
+        const m = rawUrl.match(
           /^https?:\/\/online\.fliphtml5\.com\/([^/?#]+)\/([^/?#]+)/i,
         );
         if (!m) {
-          status.textContent = "Invalid FlipHTML5 URL format.";
+          updateStatus("Invalid FlipHTML5 URL format.", "error");
           return;
         }
         const base = m[1];
@@ -243,7 +217,7 @@
           let cbzName = book;
           let indexHtml = "";
 
-          status.textContent = "Fetching book details...";
+          updateStatus("Reading book metadata...", "active");
           try {
             const resp = await fetch(`${bookRoot}index.html`);
             if (resp.ok) {
@@ -264,7 +238,7 @@
             console.warn("Could not fetch index.html:", e);
           }
 
-          status.textContent = "Fetching book configuration...";
+          updateStatus("Fetching book configuration...", "active");
           let pageList = [];
 
           try {
@@ -285,7 +259,7 @@
               const htmlConfig = fn();
               if (htmlConfig && htmlConfig.fliphtml5_pages) {
                 if (typeof htmlConfig.fliphtml5_pages === "string") {
-                  status.textContent = "Decrypting page list...";
+                  updateStatus("Decrypting page manifest...", "active");
                   const ready = await ensureDeStringReady();
                   if (ready) {
                     const decrypted = decryptFliphtml5String(
@@ -311,10 +285,17 @@
           let downloaded = 0;
 
           if (pageList && pageList.length > 0) {
-            for (let i = 0; i < pageList.length; i++) {
+            const total = pageList.length;
+            for (let i = 0; i < total; i++) {
               const p = pageList[i];
               const pageNum = i + 1;
-              status.textContent = `Downloading page ${pageNum} of ${pageList.length}...`;
+              const progressPct = Math.round((i / total) * 100);
+              updateStatus(
+                `Downloading page ${pageNum} of ${total}...`,
+                "active",
+                `${progressPct}%`,
+                progressPct,
+              );
 
               const file = Array.isArray(p.n)
                 ? p.n[0]
@@ -362,8 +343,13 @@
               }
             }
           } else {
+            // Sequential fallback for books without page manifest
             for (let page = 1; page <= 500; page++) {
-              status.textContent = `Downloading page ${page}...`;
+              updateStatus(
+                `Probing & downloading page ${page}...`,
+                "active",
+                `${page} pages`,
+              );
               const candidates = [
                 `${bookRoot}files/large/${page}.jpg`,
                 `${bookRoot}files/large/${page}.webp`,
@@ -401,23 +387,32 @@
           }
 
           if (downloaded === 0) {
-            status.textContent =
-              "No images downloaded. Please verify the URL or book visibility.";
+            updateStatus(
+              "No images could be downloaded. Check book accessibility.",
+              "error",
+            );
             return;
           }
 
-          status.textContent = "Creating CBZ file...";
+          updateStatus("Packaging CBZ file...", "active", "100%", 100);
           const cbzBlob = await zip.generateAsync({
             type: "blob",
             mimeType: "application/octet-stream",
           });
+
           const link = document.createElement("a");
           link.href = URL.createObjectURL(cbzBlob);
           link.download = `${cbzName}.cbz`;
           link.click();
-          status.textContent = `Downloaded ${downloaded} pages and created ${cbzName}.cbz`;
+
+          updateStatus(
+            `Saved ${cbzName}.cbz`,
+            "success",
+            `${downloaded} pages`,
+            100,
+          );
         } catch (err) {
-          status.textContent = `An error occurred: ${err.message || err}`;
+          updateStatus(`Error: ${err.message || err}`, "error");
         } finally {
           downloadBtn.disabled = false;
         }
